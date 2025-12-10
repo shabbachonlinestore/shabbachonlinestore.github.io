@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shabbach Platform Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #f4f5fb;
+      --bg-card: #ffffff;
+      --primary: #1b4fd8;   /* main SaaS blue */
+      --primary-soft: rgba(27, 79, 216, 0.12);
+      --accent-gold: #c9a35a; /* subtle Shabbach gold accent */
+      --text-main: #151826;
+      --text-muted: #727589;
+      --border-soft: #d8dbe8;
+      --danger: #e02424;
+      --radius-lg: 18px;
+      --shadow-soft: 0 18px 50px rgba(15, 23, 42, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e5e9ff 0, #f4f5fb 32%, #edf0ff 48%, #f7f7fc 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ✨ HOLY GLOW BACKGROUND */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,0.9) 0, transparent 60%),
+        radial-gradient(circle at 85% 60%, rgba(250,220,140,0.8) 0, transparent 60%);
+      background-size: 220px 220px, 180px 180px;
+      mix-blend-mode: screen;
+      opacity: 0.45;
+      filter: blur(10px);
+      pointer-events: none;
+      z-index: -1;
+      animation: holyGlow 9s ease-in-out infinite alternate;
+    }
+
+    @keyframes holyGlow {
+      0% { transform: translate3d(0,0,0) scale(1); opacity: 0.35; }
+      100% { transform: translate3d(-10px,10px,0) scale(1.08); opacity: 0.55; }
+    }
+
+    /* NAVBAR */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(to bottom, rgba(244,245,251,0.96), rgba(244,245,251,0.9), transparent);
+      border-bottom: 1px solid rgba(216,219,232,0.7);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 11px;
+      background: radial-gradient(circle at 25% 0, #fef9e7 0, #f4d488 30%, #c9a35a 55%, #7b5a23 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #231c0a;
+      box-shadow: 0 0 26px rgba(201,163,90,0.7);
+      animation: logoPulse 6s ease-in-out infinite;
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.08); filter: brightness(1.22); }
+    }
+
+    .logo-text-main {
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      font-size: 0.92rem;
+      text-transform: uppercase;
+    }
+
+    .logo-text-sub {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* HAMBURGER MENU */
+    .hamburger {
+      width: 28px;
+      height: 21px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .hamburger span {
+      height: 3px;
+      border-radius: 3px;
+      background: #111827;
+      transition: 0.25s;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: translateY(9px) rotate(45deg);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: translateY(-9px) rotate(-45deg);
+    }
+
+    /* SLIDE-OUT MENU */
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -270px;
+      width: 270px;
+      height: 100vh;
+      background: #ffffff;
+      box-shadow: -8px 0 30px rgba(15,23,42,0.13);
+      padding: 26px 22px;
+      z-index: 40;
+      transition: right 0.3s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .side-menu.open {
+      right: 0;
+    }
+
+    .side-menu h3 {
+      margin: 0 0 14px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+    }
+
+    .menu-link {
+      display: block;
+      padding: 9px 0;
+      font-size: 0.92rem;
+      border-bottom: 1px solid #edf0f6;
+      color: var(--text-main);
+    }
+
+    .menu-link span {
+      font-size: 0.98rem;
+      margin-right: 8px;
+    }
+
+    .menu-link:hover {
+      color: var(--primary);
+    }
+
+    .whatsapp-sales {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #25d366;
+      padding: 10px 16px;
+      border-radius: 999px;
+      color: #f9fafb;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: 0 12px 26px rgba(37,211,102,0.5);
+    }
+
+    .whatsapp-sales span {
+      font-size: 1.05rem;
+    }
+
+    /* OVERLAY */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.28);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease-in-out;
+      z-index: 35;
+    }
+
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* PAGE LAYOUT */
+    .page {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .page-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 18px 32px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 40px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .page-inner {
+        grid-template-columns: minmax(0,1fr);
+        gap: 26px;
+      }
+    }
+
+    /* LEFT SIDE (HERO) */
+    .hero-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .hero-title {
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      line-height: 1.15;
+      margin: 0 0 10px;
+    }
+
+    .hero-sub {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin-bottom: 18px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 10px 28px rgba(15,23,42,0.08);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .hero-pill span.badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      padding: 9px 18px;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #f9fbff;
+      background: linear-gradient(135deg, var(--primary), #2240b8);
+      box-shadow: 0 12px 26px rgba(27, 79, 216, 0.5);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary span.icon {
+      font-size: 1rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 32px rgba(27,79,216,0.55);
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      padding: 9px 16px;
+      border: 1px solid rgba(201,163,90,0.7);
+      font-size: 0.84rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: rgba(255,255,255,0.85);
+      color: #7b5a23;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .hero-meta span.dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--border-soft);
+    }
+
+    /* RIGHT SIDE: LOGIN CARD */
+    .login-card-wrap {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 900px) {
+      .login-card-wrap {
+        justify-content: stretch;
+      }
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 22px 22px 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(216,219,232,0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(circle at 20% 0, rgba(250,230,150,0.25) 0, transparent 55%);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .login-header {
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .login-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .login-caption {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .input {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      font-size: 0.86rem;
+      outline: none;
+      background: #fdfdff;
+    }
+
+    .input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(27,79,216,0.18);
+      background: #ffffff;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 0.78rem;
+      margin-top: 2px;
+    }
+
+    .input-row a {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .login-actions {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-full {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .btn-outline {
+      border-radius: 999px;
+      padding: 9px 18px;
+      border: 1px solid var(--border-soft);
+      font-size: 0.84rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: #f9fafc;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .btn-outline:hover {
+      background: #f1f3fb;
+    }
+
+    .login-extra {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed #e0e2ee;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-extra a {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .login-footnote {
+      margin-top: 10px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-footnote span {
+      color: var(--accent-gold);
+      font-weight: 500;
+    }
+
+    /* BELOW HERO: PRODUCTS SECTION */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 18px 34px;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .section-heading {
+      font-size: 1.2rem;
+      margin: 0 0 16px;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 18px;
+    }
+
+    @media (max-width: 840px) {
+      .products-grid {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    .product-card {
+      position: relative;
+      background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(235,239,255,0.95));
+      border-radius: 16px;
+      padding: 16px 14px 14px;
+      border: 1px solid rgba(216,219,232,0.9);
+      box-shadow: 0 14px 32px rgba(15,23,42,0.08);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .product-card::before {
+      content: "";
+      position: absolute;
+      top: -30%;
+      right: -20%;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(250,230,160,0.8) 0, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+      border-color: rgba(201,163,90,0.9);
+    }
+
+    .product-card:hover::before {
+      opacity: 1;
+    }
+
+    .product-icon {
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+    }
+
+    .product-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .product-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .product-tag {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--primary);
+    }
+
+    /* WHY SHABBACH */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 18px;
+      font-size: 0.84rem;
+    }
+
+    @media (max-width: 840px) {
+      .why-grid {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    .why-item-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .why-item-text {
+      color: var(--text-muted);
+    }
+
+    /* SCRIPTURE / TAGLINE */
+    .scripture-strip {
+      position: relative;
+      margin: 0 auto 26px;
+      max-width: 1100px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      color: #4b5563;
+    }
+
+    .scripture-pill {
+      position: relative;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(201,163,90,0.85);
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 10px 28px rgba(148,120,57,0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scripture-pill span.icon {
+      font-size: 1rem;
+      color: #b68936;
+    }
+
+    /* FOOTER */
+    .footer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 12px 18px 22px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      border-top: 1px solid rgba(216,219,232,0.8);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+    }
+
+    .footer-links a:hover {
+      color: var(--text-main);
+    }
+
+    @media (max-width: 640px) {
+      .footer {
+        flex-direction: column;
+      }
+    }
+
+    /* SIMPLE FADE-UP ANIMATION */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.7s ease-out forwards;
+    }
+
+    .fade-delay-1 { animation-delay: 0.12s; }
+    .fade-delay-2 { animation-delay: 0.22s; }
+    .fade-delay-3 { animation-delay: 0.32s; }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Overlay for menu -->
+<div id="overlay" class="overlay"></div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <div class="logo-mark">S</div>
+      <div>
+        <div class="logo-text-main">Shabbach Platform</div>
+        <div class="logo-text-sub">Digital tools for ministries</div>
+      </div>
+    </div>
+
+    <div id="hamburger" class="hamburger" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</header>
+
+<!-- Slide-out menu -->
+<nav id="sideMenu" class="side-menu">
+  <h3>Products</h3>
+  <a class="menu-link" href="#"><span>🖥️</span>Websites</a>
+  <a class="menu-link" href="#"><span>📱</span>Apps</a>
+  <a class="menu-link" href="#"><span>📣</span>Marketing</a>
+
+  <a class="whatsapp-sales"
+     href="https://wa.me/27769779568?text=Hi%20Shabbach%20Sales,%20I%20need%20help."
+     target="_blank">
+    <span>🟢</span> Talk to Sales
+  </a>
+</nav>
+
+<div class="page">
+  <main class="page-inner">
+    <!-- LEFT: HERO -->
+    <section class="fade-up">
+      <div class="hero-label">Shabbach Online Store</div>
+      <h1 class="hero-title">Empowering Ministries with Digital Excellence.</h1>
+      <p class="hero-sub">
+        Launch premium websites, mobile apps, and digital marketing tools built uniquely for churches, ministries, and purpose-driven brands.
+      </p>
+
+      <div class="hero-pill">
+        <span class="badge">For Ministries & Kingdom Businesses</span>
+        <span>Built and managed for you by Creative Online Branding.</span>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-primary" type="button">
+          <span class="icon">⚡</span>
+          <span>Get Started</span>
+        </button>
+        <a class="btn-ghost" href="https://wa.me/27769779568?text=Hi%20Shabbach%20Sales,%20I%20would%20like%20to%20discuss%20digital%20solutions."
+           target="_blank">
+          <span>💬</span>
+          Talk to Sales
+        </a>
+      </div>
+
+      <div class="hero-meta">
+        <span>Websites • Apps • Digital Ministry Tools</span>
+        <span class="dot"></span>
+        <span>Hosted, managed & updated for you.</span>
+      </div>
+    </section>
+
+    <!-- RIGHT: LOGIN CARD -->
+    <aside class="login-card-wrap fade-up fade-delay-1">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="login-label">Shabbach clients</div>
+          <div class="login-title">Access your dashboard</div>
+          <div class="login-caption">
+            Log in with the email address you used when your app or website was created.
+          </div>
+        </div>
+
+        <form>
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input id="email" type="email" class="input" placeholder="you@example.com" required />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" type="password" class="input" placeholder="••••••••" required />
+            <div class="input-row">
+              <span></span>
+              <a href="#">Forgot password?</a>
+            </div>
+          </div>
+
+          <div class="login-actions">
+            <button type="submit" class="btn-primary btn-full">
+              <span class="icon">🔐</span>
+              <span>Sign in to Shabbach</span>
+            </button>
+
+            <button type="button" class="btn-outline btn-full">
+              I’m a member / donor
+            </button>
+          </div>
+        </form>
+
+        <div class="login-extra">
+          Not sure which login to use? Contact your Shabbach representative or your church office for access.
+        </div>
+
+        <div class="login-footnote">
+          Powered by <span>Creative Online Branding</span> – custom-built apps and digital tools for ministries.
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- SCRIPTURE / TAGLINE STRIP -->
+<div class="scripture-strip fade-up fade-delay-1">
+  <div class="scripture-pill">
+    <span class="icon">✨</span>
+    <span>“Empowering Ministries with Digital Excellence.” – Shabbach Online Store</span>
+  </div>
+</div>
+
+<!-- PRODUCTS SECTION -->
+<section class="section fade-up fade-delay-1">
+  <div class="section-title">Shabbach Digital Products</div>
+  <h2 class="section-heading">Build everything your ministry needs in one platform.</h2>
+
+  <div class="products-grid">
+    <div class="product-card">
+      <div class="product-icon">🖥️</div>
+      <div class="product-title">Websites</div>
+      <div class="product-desc">
+        Modern, mobile-ready ministry and business websites—hosted, updated and maintained for you.
+      </div>
+      <div class="product-tag">Custom layouts • Hosting included</div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-icon">📱</div>
+      <div class="product-title">Apps</div>
+      <div class="product-desc">
+        Tailor-made Android apps for ministries, radio, education and content platforms—no coding needed on your side.
+      </div>
+      <div class="product-tag">Great Assistance in Ministry • Custom builds</div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-icon">📣</div>
+      <div class="product-title">Marketing</div>
+      <div class="product-desc">
+        Digital campaigns, graphics, and brand experiences that carry your message with clarity and excellence.
+      </div>
+      <div class="product-tag">Design • Strategy • Social</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY SHABBACH SECTION -->
+<section class="section fade-up fade-delay-2">
+  <div class="section-title">Why Shabbach</div>
+  <h2 class="section-heading">Built for real ministries, not just templates.</h2>
+
+  <div class="why-grid">
+    <div>
+      <div class="why-item-title">Ministry-first thinking</div>
+      <div class="why-item-text">
+        Every website and app is crafted with the realities of pastors, leaders, and congregations in mind.
+      </div>
+    </div>
+    <div>
+      <div class="why-item-title">Custom & premium look</div>
+      <div class="why-item-text">
+        No generic templates. Your brand, colours, and calling wrapped in a premium digital experience.
+      </div>
+    </div>
+    <div>
+      <div class="why-item-title">Local support you can WhatsApp</div>
+      <div class="why-item-text">
+        Talk directly to Shabbach sales and support on WhatsApp at <strong>076 977 9568</strong> when you need help.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div>© <span id="year"></span> Shabbach Online Store. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="#">Status</a>
+    <a href="#">Support</a>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+  </div>
+</footer>
+
+<script>
+  // current year
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  function toggleMenu() {
+    const menu = document.getElementById("sideMenu");
+    const overlay = document.getElementById("overlay");
+    const hamburger = document.getElementById("hamburger");
+
+    menu.classList.toggle("open");
+    overlay.classList.toggle("show");
+    hamburger.classList.toggle("active");
+  }
+
+  document.getElementById("overlay").addEventListener("click", toggleMenu);
+</script>
+
+</body>
+</html>
