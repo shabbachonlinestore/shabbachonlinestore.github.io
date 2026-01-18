@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shabbach Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--primary:#1b4fd8;
+--gold:#c9a35a;
+--text:#151826;
+--muted:#727589;
+--border:#d8dbe8;
+--shadow:0 18px 50px rgba(15,18,40,.12);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui}
+
+body{
+background:
+radial-gradient(900px 520px at 18% 12%, rgba(27,79,216,.14), transparent 60%),
+radial-gradient(900px 520px at 84% 20%, rgba(201,163,90,.16), transparent 55%),
+linear-gradient(180deg,#f7f8ff,#f2f3fb);
+min-height:100vh;
+color:var(--text);
+}
+
+.shell{max-width:1120px;margin:0 auto;padding:22px 16px 40px}
+
+/* ===== TOP BAR ===== */
+.topbar{
+display:flex;justify-content:space-between;align-items:center;
+padding:10px 12px;background:#fff;
+border:1px solid var(--border);
+border-radius:16px;
+position:sticky;top:12px;z-index:20
+}
+.brand{display:flex;gap:12px;align-items:center}
+.brand-mark{
+width:42px;height:42px;border-radius:14px;
+background:linear-gradient(135deg,var(--primary),#1b4fd8aa);
+box-shadow:0 14px 40px rgba(27,79,216,.25)
+}
+.brand-text .title{font-weight:700;font-size:14px}
+.brand-text .sub{font-size:12px;color:var(--muted)}
+
+.hamburger{
+width:44px;height:44px;border-radius:14px;
+border:1px solid var(--border);
+background:#fff;cursor:pointer;
+display:grid;place-items:center
+}
+.hamburger span{
+display:block;width:18px;height:2px;
+background:#1a2140;border-radius:99px;margin:2px 0;
+transition:.2s ease
+}
+.hamburger.active span:nth-child(1){transform:translateY(4px) rotate(45deg)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:translateY(-4px) rotate(-45deg)}
+
+.menu{
+position:absolute;right:16px;top:78px;width:340px;
+background:#fff;border:1px solid var(--border);
+border-radius:18px;box-shadow:0 26px 70px rgba(15,18,40,.16);
+opacity:0;pointer-events:none;
+transform:translateY(-8px) scale(.98);
+transition:.18s ease
+}
+.menu.open{opacity:1;pointer-events:auto;transform:none}
+.menu a{
+display:block;padding:14px 16px;
+color:var(--text);text-decoration:none;font-weight:600
+}
+.menu a:hover{background:#f4f6ff}
+
+.btn-primary{
+display:inline-flex;justify-content:center;align-items:center;
+padding:12px;border-radius:14px;
+background:linear-gradient(135deg,var(--primary),#1b4fd8cc);
+color:#fff;font-weight:700;text-decoration:none
+}
+
+/* ===== GRID ===== */
+.grid{
+margin-top:18px;
+display:grid;
+grid-template-columns:1.2fr .8fr;
+gap:18px
+}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+.card{
+background:#fff;border:1px solid var(--border);
+border-radius:22px;padding:18px;
+box-shadow:var(--shadow)
+}
+
+/* ===== HERO ===== */
+.hero h1{font-size:26px;margin-bottom:8px}
+.hero h1 span{color:var(--primary)}
+.hero p{font-size:14px;color:var(--muted);max-width:60ch}
+
+.hero-pill{
+margin:14px 0;display:inline-flex;gap:8px;
+padding:10px 12px;border-radius:999px;
+border:1px solid var(--border)
+}
+.badge{
+background:linear-gradient(135deg,var(--gold),#c9a35acc);
+color:#fff;font-size:12px;font-weight:800;
+padding:6px 10px;border-radius:999px
+}
+
+/* ===== ADS ===== */
+.ads-wrap{margin-top:16px;border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.ads-head{padding:12px 14px;border-bottom:1px solid var(--border);font-weight:800}
+.ads-stage{position:relative;height:360px}
+.ad-card{position:absolute;inset:0;opacity:0;transition:.6s ease;display:flex;flex-direction:column}
+.ad-card.active{opacity:1}
+.ad-media{flex:1;background:#f2f4ff;display:flex;align-items:center;justify-content:center}
+.ad-media img{width:100%;height:100%;object-fit:contain}
+.ad-caption{padding:12px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
+
+/* ===== CONTENT ===== */
+.section-title{font-size:20px;font-weight:800;margin-bottom:6px}
+.section-sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+
+.list{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px
+}
+@media(max-width:900px){.list{grid-template-columns:1fr}}
+
+.list-item{
+border:1px solid var(--border);
+border-radius:18px;padding:14px
+}
+
+/* ===== BLOGS ===== */
+.blog-card{
+border:1px solid var(--border);
+border-radius:22px;
+overflow:hidden;
+box-shadow:var(--shadow);
+margin-top:18px;
+cursor:pointer
+}
+.blog-card img{width:100%;display:block}
+.blog-info{padding:16px}
+.blog-info h3{margin-bottom:6px}
+.blog-info p{font-size:14px;color:var(--muted)}
+
+.blog-content{
+max-height:0;
+overflow:hidden;
+opacity:0;
+transform:translateY(20px);
+transition:max-height .6s ease, opacity .4s ease, transform .4s ease;
+}
+.blog-content.active{
+max-height:2000px;
+opacity:1;
+transform:translateY(0);
+margin-top:12px;
+}
+
+/* ===== HOW IMAGE ===== */
+.how-image{
+width:100%;
+margin:18px 0;
+border-radius:18px;
+overflow:hidden;
+border:1px solid var(--border);
+}
+.how-image img{width:100%;display:block}
+
+/* ===== REVEAL ===== */
+.reveal{opacity:0;transform:translateY(28px);transition:.9s ease}
+.reveal.active{opacity:1;transform:none}
+
+/* ===== FOOTER ===== */
+footer{
+margin-top:24px;font-size:12px;color:var(--muted);
+display:flex;justify-content:space-between
+}
+</style>
+</head>
+
+<body>
+
+<div class="shell">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div class="brand-text">
+      <div class="title">Shabbach Platform</div>
+      <div class="sub">Digital tools for ministries</div>
+    </div>
+  </div>
+
+  <div id="hamburger" class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+
+  <div id="menu" class="menu">
+    <a href="#library">Content Library</a>
+    <a href="#blogs">Blogs</a>
+    <a href="#how">How it works</a>
+    <a href="#login">Client login</a>
+    <a class="btn-primary" href="https://wa.me/27769779568">Talk to Sales</a>
+  </div>
+</div>
+
+<div class="grid">
+
+<section class="card hero">
+<h1># Empowering Ministries with <span>Digital Excellence</span></h1>
+<p>We design, build and manage premium digital platforms for churches and ministries.</p>
+
+<div class="hero-pill">
+<span class="badge">Invite-only Platform</span>
+<span>Built by Creative Online Branding</span>
+</div>
+
+<div class="ads-wrap">
+<div class="ads-head">✨ Shabbach Premium Showcase</div>
+<div class="ads-stage">
+<div class="ad-card active"><div class="ad-media"><img src="https://i.postimg.cc/C5GNHtnk/file-00000000ed64722fabf0bf6011a818ac.png"></div><div class="ad-caption"><b>Premium Digital Church Services</b><span>Websites • Apps</span></div></div>
+<div class="ad-card"><div class="ad-media"><img src="https://i.postimg.cc/fLxX6dWt/AIRetouch-20251217-064005848.png"></div><div class="ad-caption"><b>Impress Your Congregation</b><span>Modern Platforms</span></div></div>
+<div class="ad-card"><div class="ad-media"><img src="https://i.postimg.cc/sXRG92YN/file-000000006c0871f88f81b9da105e7046.png"></div><div class="ad-caption"><b>From Idea to Launch</b><span>Fast & Supported</span></div></div>
+</div>
+</div>
+</section>
+
+<aside class="card reveal" id="login">
+<div class="login-title">Client Access Only</div>
+<div class="login-caption">Invite-only access after onboarding.</div>
+<input class="input" placeholder="Email address">
+<input class="input" type="password" placeholder="Password">
+<br><br>
+<a class="btn-primary" style="width:100%">Sign in</a>
+</aside>
+
+</div>
+
+<!-- CONTENT LIBRARY -->
+<section class="card reveal" id="library">
+<div class="section-title">Content Library</div>
+<div class="section-sub">Curated discipleship resources.</div>
+<div class="list">
+<div class="list-item">📖 <b>Daily Discipleship</b><br>Guided spiritual growth</div>
+<div class="list-item">🎥 <b>Video Teachings</b><br>Sermons & series</div>
+<div class="list-item">🙏 <b>Prayer & Devotion</b><br>Moments of prayer</div>
+<div class="list-item">🧭 <b>Leadership Growth</b><br>For ministry leaders</div>
+<div class="list-item">👨‍👩‍👧 <b>Youth & Family</b><br>Faith for families</div>
+<div class="list-item">⭐ <b>Premium Content</b><br>Invite-only</div>
+</div>
+</section>
+
+<!-- BLOGS -->
+<section class="card reveal" id="blogs">
+<h2>Featured Blogs</h2>
+
+<div class="blog-card" onclick="toggleBlog(1)">
+<img src="https://i.postimg.cc/bN4zfT22/file-00000000ca0471f5b072c8c060fe8f52.png">
+<div class="blog-info">
+<h3>Why Digital Ministry Is No Longer Optional</h3>
+<p><b>Read full blog →</b></p>
+<div id="blog1" class="blog-content">
+<p>The Church has always used tools to spread the Gospel — from Roman roads to the printing press, radio, television, and now digital platforms. Technology does not replace ministry; it extends it.</p>
+<p>In the modern age, digital presence allows churches to disciple, communicate, and remain present beyond Sunday services.</p>
+</div>
+</div>
+</div>
+
+<div class="blog-card" onclick="toggleBlog(2)">
+<img src="https://i.postimg.cc/KY2xR8f8/file-0000000035e8722f8ddbf8a56e0d8d00.png">
+<div class="blog-info">
+<h3>Pastor Burnout Is a Systems Problem, Not a Calling Problem</h3>
+<p><b>Read full blog →</b></p>
+<div id="blog2" class="blog-content">
+<p>Many pastors today feel overwhelmed, stretched thin, and exhausted. This burnout is often misinterpreted as a lack of faith, passion, or commitment — but that is rarely the truth.</p>
+<p>In most cases, burnout is caused by poor systems. Endless messages, manual admin work, scattered communication, and lack of structure slowly drain ministry leaders.</p>
+<p>Digital platforms help centralise communication, automate routine tasks, and create healthy boundaries. When systems are in place, pastors are free to focus on people, prayer, and vision — not administration.</p>
+</div>
+</div>
+</div>
+
+<div class="blog-card" onclick="toggleBlog(3)">
+<img src="https://i.postimg.cc/3RLTSCTc/file-000000007bb4722fbb49e43410fafd97.png">
+<div class="blog-info">
+<h3>Reaching the Next Generation Without Changing the Message</h3>
+<p><b>Read full blog →</b></p>
+<div id="blog3" class="blog-content">
+<p>The message of the Gospel has never changed — but the way people receive information has. Younger generations live in a digital-first world where connection happens online before it happens in person.</p>
+<p>Being digitally present does not mean compromising truth or chasing trends. It means meeting people where they already are and guiding them toward meaningful faith.</p>
+<p>Churches that embrace digital tools can disciple young people throughout the week, provide consistent teaching, and build long-term engagement rooted in truth, not hype.</p>
+</div>
+</div>
+</div>
+
+<div class="blog-card" onclick="toggleBlog(4)">
+<img src="https://i.postimg.cc/gjQPdzrP/file-0000000021cc71f5b42c89b036fcd5b7.png">
+<div class="blog-info">
+<h3>Discipleship Beyond Sunday: Building Faith Throughout the Week</h3>
+<p><b>Read full blog →</b></p>
+<div id="blog4" class="blog-content">
+<p>True discipleship is not an event — it is a journey. While Sunday services are important, spiritual growth happens through daily engagement with the Word, prayer, and community.</p>
+<p>Relying on one sermon a week places unnecessary pressure on both leaders and members. Digital discipleship tools allow churches to support faith development every day.</p>
+<p>When teaching, devotionals, and prayer resources are accessible throughout the week, believers grow consistently and communities become stronger.</p>
+</div>
+</div>
+</div>
+
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="card reveal" id="how">
+<div class="section-title">How Shabbach Online Store Works</div>
+<div class="section-sub">We handle the technical work so your ministry can focus on the calling.</div>
+
+<div class="how-image">
+<img src="https://i.postimg.cc/RZsCbBL7/file-00000000577c71f5a73fc67f65321bce.png" alt="How Shabbach Online Store Works">
+</div>
+
+<div class="list">
+<div class="list-item">🚀 <b>We Build the Platform</b><br>We design and develop your church website or app.</div>
+<div class="list-item">🌍 <b>Deployment & DNS Setup</b><br>We configure hosting, domains, and DNS.</div>
+<div class="list-item">📱 <b>Ministry App Development</b><br>Custom apps for sermons, discipleship, and engagement.</div>
+</div>
+
+<br>
+
+<a class="btn-primary" href="https://wa.me/27769779568" style="width:100%">Contact Us to Get Started</a>
+</section>
+
+<footer>
+<div>© Shabbach Online Store</div>
+<div>Powered by Creative Online Branding</div>
+</footer>
+
+</div>
+
+<script>
+const hamburger=document.getElementById("hamburger");
+const menu=document.getElementById("menu");
+
+function toggleMenu(){
+menu.classList.toggle("open");
+hamburger.classList.toggle("active");
+}
+
+function toggleBlog(id){
+document.getElementById("blog"+id).classList.toggle("active");
+}
+
+const reveals=document.querySelectorAll(".reveal");
+window.addEventListener("scroll",()=>{
+reveals.forEach(r=>{
+if(r.getBoundingClientRect().top<window.innerHeight-100){
+r.classList.add("active")
+}
+})
+});
+
+const ads=document.querySelectorAll(".ad-card");
+let i=0;
+setInterval(()=>{
+ads[i].classList.remove("active");
+i=(i+1)%ads.length;
+ads[i].classList.add("active");
+},6000);
+</script>
+
+</body>
+</html>
